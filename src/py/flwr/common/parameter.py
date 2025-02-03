@@ -17,6 +17,7 @@
 
 from io import BytesIO
 from typing import cast
+import os
 
 import numpy as np
 
@@ -37,10 +38,13 @@ def parameters_to_ndarrays(parameters: Parameters) -> NDArrays:
     """Convert parameters object to NumPy ndarrays."""
     # return [bytes_to_ndarray(tensor) for tensor in parameters.tensors]
     secret_path = "./secret.pkl"
-    with open(secret_path, 'rb') as f:
-        query = pickle.load(f)
+    if os.path.exists(secret_path):
+        with open(secret_path, 'rb') as f:
+            query = pickle.load(f)
 
-    context_client = ts.context_from(query["contexte"])
+        context_client = ts.context_from(query["contexte"])
+    else:
+        context_client = None
     return parameters_to_ndarrays_custom(parameters, context_client=context_client)
 
 
